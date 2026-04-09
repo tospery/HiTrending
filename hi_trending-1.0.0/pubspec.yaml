@@ -1,0 +1,20 @@
+name: hi_trending
+description: GitHub Trending data API in Dart.
+version: 1.0.0
+repository: https://github.com/tospery/flutter/tree/main/packages/hi_trending
+issue_tracker: https://github.com/tospery/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+hi_trending%22
+
+environment:
+  sdk: ^3.8.1
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  equatable: ^2.0.7
+  http: ^1.5.0
+  html: ^0.15.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
