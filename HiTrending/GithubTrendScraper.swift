@@ -13,11 +13,14 @@ struct GithubTrendScraper {
     private let topContributorItemSelector = "span> a> img"
 
     private let devItemSelector = "div>div>div>article.Box-row"
-    private let devAvatarSelector = "div.mx-3 > a > img"
+    private let devAvatarSelector = "div.tmp-mx-3 > a > img"
+    private let devAvatarSelectorBak1 = "div.mx-3 > a > img"
     private let devNameSelector = "div > div > div:nth-child(1) > h1 > a"
     private let devUsernameSelector = "div > div > div:nth-child(1) > p > a"
     private let devPopularRepoNameSelector = "div > div > div > div > article > h1 > a"
-    private let devPopularRepoDescriptionMarker = "<div class=\"f6 color-text-secondary mt-1\">"
+    
+    private let devPopularRepoDescriptionMarker = "<div class=\"f6 color-fg-muted mt-1\">"
+    private let devPopularRepoDescriptionMarkerBak1 = "<div class=\"f6 color-text-secondary mt-1\">"
 
     func copyWith(base: String) -> GithubTrendScraper {
         var s = self
@@ -67,7 +70,8 @@ struct GithubTrendScraper {
         guard let body = await GhTrendHTTP.getString(proxy: proxy, path: path, headers: headers) else {
             return []
         }
-        let rawHtml = body.replacingOccurrences(of: devPopularRepoDescriptionMarker, with: "<div id=\"repoDescription\">")
+        var rawHtml = body.replacingOccurrences(of: devPopularRepoDescriptionMarker, with: "<div id=\"repoDescription\">")
+        rawHtml = rawHtml.replacingOccurrences(of: devPopularRepoDescriptionMarkerBak1, with: "<div id=\"repoDescription\">")
         do {
             let doc = try SwiftSoup.parse(rawHtml)
             let htmlItems = try doc.select(devItemSelector)
@@ -137,7 +141,10 @@ struct GithubTrendScraper {
     }
 
     private func parseDeveloperRow(_ htmlItem: Element) -> GithubDeveloperItem? {
-        let avatar = (try? htmlItem.select(devAvatarSelector).first()?.attr("src")) ?? ""
+        var avatar = (try? htmlItem.select(devAvatarSelector).first()?.attr("src")) ?? ""
+        if avatar.isEmpty {
+            avatar = (try? htmlItem.select(devAvatarSelectorBak1).first()?.attr("src")) ?? ""
+        }
         let name = (try? htmlItem.select(devNameSelector).first()?.text())?
             .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         let username = (try? htmlItem.select(devUsernameSelector).first()?.text())?
@@ -170,9 +177,6 @@ private enum GhTrendHTTP {
         for (k, v) in headers {
             request.setValue(v, forHTTPHeaderField: k)
         }
-//        if request.value(forHTTPHeaderField: "User-Agent") == nil {
-//            request.setValue("SwiftTrending/1.1 (iOS; +https://pub.dev/packages/gh_trend)", forHTTPHeaderField: "User-Agent")
-//        }
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
             return String(data: data, encoding: .utf8)
