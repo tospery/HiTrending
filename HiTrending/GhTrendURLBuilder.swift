@@ -1,6 +1,6 @@
 import Foundation
 
-/// Builds the path and query string appended to `https://github.com/trending` (same rules as gh_trend `repoTrendPath`).
+/// Builds the path and query string appended to `https://github.com/trending`
 func repoTrendPath(
     _ base: String,
     spokenLanguageCode: String = "",

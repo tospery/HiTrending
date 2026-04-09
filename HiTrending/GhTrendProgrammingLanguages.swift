@@ -1,7 +1,7 @@
 import Foundation
 
 public enum GhTrendProgrammingLanguages {
-    /// List of possible programming languages from GitHub (aligned with gh_trend).
+    /// List of possible programming languages from GitHub.
     public static let ghProgrammingLanguages: [String: String] = [
         "1c-enterprise": "1C Enterprise",
         "abap": "ABAP",

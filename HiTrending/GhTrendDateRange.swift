@@ -1,6 +1,6 @@
 import Foundation
 
-/// GitHub trending time window (aligned with [gh_trend](https://pub.dev/packages/gh_trend) `GhTrendDateRange`).
+/// GitHub trending time window (aligned with `GhTrendDateRange`).
 public enum GhTrendDateRange: String, Sendable, CaseIterable {
     case today
     case thisWeek

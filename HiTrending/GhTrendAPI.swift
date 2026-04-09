@@ -2,7 +2,7 @@ import Foundation
 
 private let _ghTrendScraper = GithubTrendScraper()
 
-/// Fetches trending repositories from GitHub (Swift port of [gh_trend](https://pub.dev/packages/gh_trend) `ghTrendingRepositories`).
+/// Fetches trending repositories from GitHub`ghTrendingRepositories`).
 ///
 /// - Parameters:
 ///   - spokenLanguageCode: Keys from ``GhTrendSpokenLanguages/ghSpokenLanguages`` (e.g. `"en"`).

@@ -12,6 +12,7 @@
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		9153E6CF2F87C12000D95E8F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9153E6CE2F87C12000D95E8F /* SceneDelegate.swift */; };
 		9153E6D12F87C1D000D95E8F /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9153E6D02F87C1D000D95E8F /* Launch Screen.storyboard */; };
+		91D68C012F87CCC400E79097 /* devs.html in Resources */ = {isa = PBXBuildFile; fileRef = 91D68C002F87CCC400E79097 /* devs.html */; };
 		D1EC2F9CDAD78C4A4EAC97AA /* Pods_HiTrending_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08EABDD67DE1D7756B182EED /* Pods_HiTrending_Example.framework */; };
 /* End PBXBuildFile section */
 
@@ -30,6 +31,7 @@
 		79BD23B5CAB7C907F6B4406D /* HiTrending.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = HiTrending.podspec; path = ../HiTrending.podspec; sourceTree = "<group>"; };
 		9153E6CE2F87C12000D95E8F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		9153E6D02F87C1D000D95E8F /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		91D68C002F87CCC400E79097 /* devs.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = devs.html; sourceTree = "<group>"; };
 		ABF33BB059062BD6E8660B1E /* Pods-HiTrending_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HiTrending_Tests.release.xcconfig"; path = "Target Support Files/Pods-HiTrending_Tests/Pods-HiTrending_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		DB2EC46D117AA3F71C7389FE /* Pods_HiTrending_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HiTrending_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -94,6 +96,7 @@
 				607FACD31AFB9204008FA782 /* Supporting Files */,
 				9153E6CE2F87C12000D95E8F /* SceneDelegate.swift */,
 				9153E6D02F87C1D000D95E8F /* Launch Screen.storyboard */,
+				91D68C002F87CCC400E79097 /* devs.html */,
 			);
 			name = "Example for HiTrending";
 			path = HiTrending;
@@ -180,6 +183,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9153E6D12F87C1D000D95E8F /* Launch Screen.storyboard in Resources */,
+				91D68C012F87CCC400E79097 /* devs.html in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

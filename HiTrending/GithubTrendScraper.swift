@@ -1,7 +1,7 @@
 import Foundation
 import SwiftSoup
 
-/// Mirrors the selector layout and HTML workarounds from [gh_trend](https://pub.dev/packages/gh_trend) `GithubTrendScraper`.
+/// Mirrors the selector layout and HTML workarounds from `GithubTrendScraper`.
 struct GithubTrendScraper {
     var base: String = ""
 
@@ -170,9 +170,9 @@ private enum GhTrendHTTP {
         for (k, v) in headers {
             request.setValue(v, forHTTPHeaderField: k)
         }
-        if request.value(forHTTPHeaderField: "User-Agent") == nil {
-            request.setValue("SwiftTrending/1.1 (iOS; +https://pub.dev/packages/gh_trend)", forHTTPHeaderField: "User-Agent")
-        }
+//        if request.value(forHTTPHeaderField: "User-Agent") == nil {
+//            request.setValue("SwiftTrending/1.1 (iOS; +https://pub.dev/packages/gh_trend)", forHTTPHeaderField: "User-Agent")
+//        }
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
             return String(data: data, encoding: .utf8)

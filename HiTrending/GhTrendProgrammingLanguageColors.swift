@@ -1,7 +1,7 @@
 import Foundation
 
 enum GhTrendProgrammingLanguageColors {
-    /// Hex colors for known language display names (from gh_trend).
+    /// Hex colors for known language display names.
     static let programmingLanguageColors: [String: String] = [
         "1C Enterprise": "#814CCC",
         "ABAP": "#E8274B",
