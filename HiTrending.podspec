@@ -16,7 +16,6 @@ Pod::Spec.new do |s|
   s.frameworks = 'Foundation'
   
   s.source_files = 'HiTrending/**/*'
-  s.dependency 'HiBase', '~> 1.0'
   s.dependency 'SwiftSoup', '~> 2.7'
   
 end

@@ -100,7 +100,7 @@ final class DeveloperTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(with dev: GithubDeveloperItem) {
+    func configure(with dev: HiTrendingDeveloper) {
         nameLabel.isHidden = dev.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         nameLabel.text = dev.name
 

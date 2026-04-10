@@ -1,8 +1,7 @@
 import Foundation
 import SwiftSoup
 
-/// Mirrors the selector layout and HTML workarounds from `GithubTrendScraper`.
-struct GithubTrendScraper {
+struct HiTrendingScraper {
     var base: String = ""
 
     private let repoItemSelector = "div>div>div>article.Box-row"
@@ -28,7 +27,7 @@ struct GithubTrendScraper {
     
     private let devJoinedDateSelector = "div > div > div:nth-child(2) > div > p.tmp-mb-3"
 
-    func copyWith(base: String) -> GithubTrendScraper {
+    func copyWith(base: String) -> HiTrendingScraper {
         var s = self
         s.base = base
         return s
@@ -38,23 +37,23 @@ struct GithubTrendScraper {
         spokenLanguageCode: String = "",
         programmingLanguage: String = "",
         proxy: String = "",
-        dateRange: GhTrendDateRange = .today,
+        dateRange: HiTrendingRange = .daily,
         headers: [String: String] = [:]
-    ) async -> [GithubRepoItem] {
-        let path = repoTrendPath(
+    ) async -> [HiTrendingRepository] {
+        let path = trendingRepositoriesPath(
             base,
             spokenLanguageCode: spokenLanguageCode,
             programmingLanguage: programmingLanguage,
             dateRange: dateRange
         )
-        guard let body = await GhTrendHTTP.getString(proxy: proxy, path: path, headers: headers) else {
+        guard let body = await requestHTMLString(proxy: proxy, path: path, headers: headers) else {
             return []
         }
         let rawHtml = body.replacingOccurrences(of: programmingLanguageMarker, with: "<span id=\"programmingLanguage\">")
         do {
             let doc = try SwiftSoup.parse(rawHtml)
             let htmlItems = try doc.select(repoItemSelector)
-            var result: [GithubRepoItem] = []
+            var result: [HiTrendingRepository] = []
             for htmlItem in htmlItems {
                 if let item = parseRepoRow(htmlItem) {
                     result.append(item)
@@ -69,11 +68,11 @@ struct GithubTrendScraper {
     func ghTrendingDevelopers(
         programmingLanguage: String = "",
         proxy: String = "",
-        dateRange: GhTrendDateRange = .today,
+        dateRange: HiTrendingRange = .daily,
         headers: [String: String] = [:]
-    ) async -> [GithubDeveloperItem] {
-        let path = repoTrendPath(base, programmingLanguage: programmingLanguage, dateRange: dateRange)
-        guard let body = await GhTrendHTTP.getString(proxy: proxy, path: path, headers: headers) else {
+    ) async -> [HiTrendingDeveloper] {
+        let path = trendingRepositoriesPath(base, programmingLanguage: programmingLanguage, dateRange: dateRange)
+        guard let body = await requestHTMLString(proxy: proxy, path: path, headers: headers) else {
             return []
         }
         var rawHtml = body.replacingOccurrences(of: devPopularRepoDescriptionMarker, with: "<div id=\"repoDescription\">")
@@ -81,7 +80,7 @@ struct GithubTrendScraper {
         do {
             let doc = try SwiftSoup.parse(rawHtml)
             let htmlItems = try doc.select(devItemSelector)
-            var result: [GithubDeveloperItem] = []
+            var result: [HiTrendingDeveloper] = []
             for htmlItem in htmlItems {
                 if let item = parseDeveloperRow(htmlItem) {
                     result.append(item)
@@ -93,7 +92,7 @@ struct GithubTrendScraper {
         }
     }
 
-    private func parseRepoRow(_ htmlItem: Element) -> GithubRepoItem? {
+    private func parseRepoRow(_ htmlItem: Element) -> HiTrendingRepository? {
         do {
             var nameLink = try htmlItem.select(nameSelector).first()
             if nameLink == nil {
@@ -121,7 +120,7 @@ struct GithubTrendScraper {
                 .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
             let programmingLanguage = (try? item.select("#programmingLanguage").first()?.text())?
                 .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-            let programmingLanguageColor = GhTrendProgrammingLanguageColors.colorHex(forDisplayName: programmingLanguage)
+            let programmingLanguageColor = HiTrendingLanguage.colors[programmingLanguage]
 
             let totalStars = parseInt(try? item.select("#stargazersCount").first()?.text())
             var starsSince = (try? item.select(starsSinceSelector).first()?.text())?
@@ -134,16 +133,16 @@ struct GithubTrendScraper {
             }
             let totalForks = parseInt(try? item.select("#forkCount").first()?.text())
 
-            var topContributors: [GithubUserItem] = []
+            var topContributors: [HiTrendingBaseDeveloper] = []
             if let contribElements = try? item.select(topContributorItemSelector) {
                 for contrib in contribElements {
                     let avatar = (try? contrib.attr("src")) ?? ""
                     let alt = ((try? contrib.attr("alt")) ?? "").replacingOccurrences(of: "@", with: "")
-                    topContributors.append(GithubUserItem(name: alt, avatar: avatar))
+                    topContributors.append(HiTrendingBaseDeveloper(name: alt, avatar: avatar))
                 }
             }
 
-            return GithubRepoItem(
+            return HiTrendingRepository(
                 owner: owner,
                 repoName: repoName,
                 description: description,
@@ -159,7 +158,7 @@ struct GithubTrendScraper {
         }
     }
 
-    private func parseDeveloperRow(_ htmlItem: Element) -> GithubDeveloperItem? {
+    private func parseDeveloperRow(_ htmlItem: Element) -> HiTrendingDeveloper? {
         var avatar = (try? htmlItem.select(devAvatarSelector).first()?.attr("src")) ?? ""
         if avatar.isEmpty {
             avatar = (try? htmlItem.select(devAvatarSelectorBak1).first()?.attr("src")) ?? ""
@@ -179,7 +178,7 @@ struct GithubTrendScraper {
         let joinedDate = (try? htmlItem.select(devJoinedDateSelector).first()?.text())?
             .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         
-        return GithubDeveloperItem(
+        return HiTrendingDeveloper(
             avatar: avatar,
             name: name,
             username: username,
@@ -195,11 +194,9 @@ struct GithubTrendScraper {
         let cleaned = text.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: ",", with: "")
         return Int(cleaned) ?? 0
     }
-}
-
-private enum GhTrendHTTP {
-    static func getString(proxy: String, path: String, headers: [String: String]) async -> String? {
-        let urlString = proxy + GhTrendConstants.githubBase + path
+    
+    private func requestHTMLString(proxy: String, path: String, headers: [String: String]) async -> String? {
+        let urlString = proxy + HiTrendingConstant.baseURLString + path
         guard let url = URL(string: urlString) else { return nil }
         var request = URLRequest(url: url)
         for (k, v) in headers {
@@ -212,4 +209,5 @@ private enum GhTrendHTTP {
             return nil
         }
     }
+    
 }

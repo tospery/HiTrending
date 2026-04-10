@@ -12,8 +12,8 @@ import UIKit
 class ViewController: UIViewController {
 
     private enum ContentMode {
-        case repositories([GithubRepoItem])
-        case developers([GithubDeveloperItem])
+        case repositories([HiTrendingRepository])
+        case developers([HiTrendingDeveloper])
         case empty
     }
 
@@ -74,7 +74,7 @@ class ViewController: UIViewController {
     @objc private func loadRepositories() {
         setLoading(true)
         Task {
-            let items = await ghTrendingRepositories()
+            let items = await HiTrending.shared.repositories()
             await MainActor.run {
                 self.setLoading(false)
                 self.contentMode = .repositories(items)
@@ -86,7 +86,7 @@ class ViewController: UIViewController {
     @objc private func loadDevelopers() {
         setLoading(true)
         Task {
-            let items = await ghTrendingDevelopers()
+            let items = await HiTrending.shared.developers()
             await MainActor.run {
                 self.setLoading(false)
                 self.contentMode = .developers(items)
