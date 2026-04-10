@@ -21,6 +21,10 @@ struct GithubTrendScraper {
     
     private let devPopularRepoDescriptionMarker = "<div class=\"f6 color-fg-muted mt-1\">"
     private let devPopularRepoDescriptionMarkerBak1 = "<div class=\"f6 color-text-secondary mt-1\">"
+    
+    private let devOrganizationNameSelector = "div > div > div:nth-child(2) > div > p > span > span.Truncate-text"
+    
+    private let devJoinedDateSelector = "div > div > div:nth-child(2) > div > p.tmp-mb-3"
 
     func copyWith(base: String) -> GithubTrendScraper {
         var s = self
@@ -153,12 +157,21 @@ struct GithubTrendScraper {
             .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         let popularRepoDescription = (try? htmlItem.select("#repoDescription").first()?.text())?
             .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        
+        let organizationName = (try? htmlItem.select(devOrganizationNameSelector).first()?.text())?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        
+        let joinedDate = (try? htmlItem.select(devJoinedDateSelector).first()?.text())?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        
         return GithubDeveloperItem(
             avatar: avatar,
             name: name,
             username: username,
             popularRepoName: popularRepoName,
-            popularRepoDescription: popularRepoDescription
+            popularRepoDescription: popularRepoDescription,
+            organizationName: organizationName,
+            joinedDate: joinedDate
         )
     }
 

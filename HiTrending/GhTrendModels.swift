@@ -53,18 +53,24 @@ public struct GithubDeveloperItem: Equatable, Hashable, Codable, Sendable {
     public var username: String
     public var popularRepoName: String
     public var popularRepoDescription: String
+    public var organizationName: String
+    public var joinedDate: String
 
     public init(
         avatar: String,
         name: String,
         username: String,
         popularRepoName: String,
-        popularRepoDescription: String
+        popularRepoDescription: String,
+        organizationName: String,
+        joinedDate: String
     ) {
         self.avatar = avatar
         self.name = name
         self.username = username
         self.popularRepoName = popularRepoName
         self.popularRepoDescription = popularRepoDescription
+        self.organizationName = organizationName
+        self.joinedDate = joinedDate
     }
 }

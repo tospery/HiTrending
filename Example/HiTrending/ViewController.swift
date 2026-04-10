@@ -24,9 +24,10 @@ class ViewController: UIViewController {
         tv.translatesAutoresizingMaskIntoConstraints = false
         tv.dataSource = self
         tv.delegate = self
-        tv.rowHeight = 50
-        tv.estimatedRowHeight = 88
+        tv.rowHeight = 100
+        tv.estimatedRowHeight = 100
         tv.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tv.register(DeveloperTableViewCell.self, forCellReuseIdentifier: DeveloperTableViewCell.reuseIdentifier)
         return tv
     }()
 
@@ -120,11 +121,10 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.selectionStyle = .none
-
         switch contentMode {
         case .repositories(let items):
+            let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+            cell.selectionStyle = .none
             let repo = items[indexPath.row]
             var config = cell.defaultContentConfiguration()
             config.text = "\(repo.owner)/\(repo.repoName)"
@@ -133,22 +133,17 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
                 "\(lang) · ☆\(repo.totalStars) · \(repo.starsSince)\n\(repo.description)"
             config.secondaryTextProperties.numberOfLines = 0
             cell.contentConfiguration = config
+            return cell
         case .developers(let items):
-            let dev = items[indexPath.row]
-            var config = cell.defaultContentConfiguration()
-            let title: String
-            if dev.name.isEmpty {
-                title = dev.username
-            } else {
-                title = "\(dev.name) (@\(dev.username))"
-            }
-            config.text = title
-            config.secondaryText = "\(dev.popularRepoName)\n\(dev.popularRepoDescription)"
-            config.secondaryTextProperties.numberOfLines = 0
-            cell.contentConfiguration = config
+            let devCell =
+                tableView.dequeueReusableCell(
+                    withIdentifier: DeveloperTableViewCell.reuseIdentifier,
+                    for: indexPath
+                ) as! DeveloperTableViewCell
+            devCell.configure(with: items[indexPath.row])
+            return devCell
         case .empty:
-            break
+            return tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         }
-        return cell
     }
 }
