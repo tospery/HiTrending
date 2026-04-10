@@ -6,10 +6,12 @@ struct GithubTrendScraper {
     var base: String = ""
 
     private let repoItemSelector = "div>div>div>article.Box-row"
-    private let nameSelector = "article> h1> a"
+    private let nameSelector = "article> h2> a"
+    private let nameSelectorBak1 = "article> h1> a"
     private let descriptionSelector = "article> p"
     private let programmingLanguageMarker = "<span itemprop=\"programmingLanguage\">"
-    private let starsSinceSelector = "article> div.f6.color-text-secondary.mt-2> span.d-inline-block.float-sm-right"
+    private let starsSinceSelector = "article> div.f6.color-fg-muted.mt-2> span.d-inline-block.float-sm-right"
+    private let starsSinceSelectorBak1 = "article> div.f6.color-text-secondary.mt-2> span.d-inline-block.float-sm-right"
     private let topContributorItemSelector = "span> a> img"
 
     private let devItemSelector = "div>div>div>article.Box-row"
@@ -93,18 +95,26 @@ struct GithubTrendScraper {
 
     private func parseRepoRow(_ htmlItem: Element) -> GithubRepoItem? {
         do {
-            guard let nameLink = try htmlItem.select(nameSelector).first() else { return nil }
-            let nameParts = try nameLink.text().trimmingCharacters(in: .whitespacesAndNewlines).split(separator: "/").map {
+            var nameLink = try htmlItem.select(nameSelector).first()
+            if nameLink == nil {
+                nameLink = try htmlItem.select(nameSelectorBak1).first()
+            }
+            if nameLink == nil {
+                return nil
+            }
+            let nameParts = try nameLink!.text().trimmingCharacters(in: .whitespacesAndNewlines).split(separator: "/").map {
                 String($0).trimmingCharacters(in: .whitespacesAndNewlines)
             }
             let owner = nameParts.count > 0 ? nameParts[0] : ""
             let repoName = nameParts.count > 1 ? nameParts[1] : ""
 
             let from = "href=\"/\(owner)/\(repoName)/stargazers\""
-            let fromMembers = "href=\"/\(owner)/\(repoName)/network/members.\(repoName)\""
+            let fromMembers = "href=\"/\(owner)/\(repoName)/forks\""
+            let fromMembersBak1 = "href=\"/\(owner)/\(repoName)/network/members.\(repoName)\""
             let rawItem = try htmlItem.outerHtml()
                 .replacingOccurrences(of: from, with: "\(from) id=\"stargazersCount\" ")
                 .replacingOccurrences(of: fromMembers, with: "\(fromMembers) id=\"forkCount\" ")
+                .replacingOccurrences(of: fromMembersBak1, with: "\(fromMembers) id=\"forkCount\" ")
             let item = try Parser.parseBodyFragment(rawItem, "")
 
             let description = (try? item.select(descriptionSelector).first()?.text())?
@@ -114,9 +124,14 @@ struct GithubTrendScraper {
             let programmingLanguageColor = GhTrendProgrammingLanguageColors.colorHex(forDisplayName: programmingLanguage)
 
             let totalStars = parseInt(try? item.select("#stargazersCount").first()?.text())
-            let starsSince = (try? item.select(starsSinceSelector).first()?.text())?
+            var starsSince = (try? item.select(starsSinceSelector).first()?.text())?
                 .trimmingCharacters(in: .whitespacesAndNewlines)
                 .replacingOccurrences(of: ",", with: "") ?? ""
+            if starsSince.isEmpty {
+                starsSince = (try? item.select(starsSinceSelectorBak1).first()?.text())?
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                    .replacingOccurrences(of: ",", with: "") ?? ""
+            }
             let totalForks = parseInt(try? item.select("#forkCount").first()?.text())
 
             var topContributors: [GithubUserItem] = []
