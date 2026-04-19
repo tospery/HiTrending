@@ -33,7 +33,7 @@ struct HiTrendingScraper {
         return s
     }
 
-    func ghTrendingRepositories(
+    func trendingRepositories(
         spokenLanguageCode: String = "",
         programmingLanguage: String = "",
         proxy: String = "",
@@ -65,7 +65,7 @@ struct HiTrendingScraper {
         }
     }
 
-    func ghTrendingDevelopers(
+    func trendingDevelopers(
         programmingLanguage: String = "",
         proxy: String = "",
         dateRange: HiTrendingRange = .daily,
@@ -136,22 +136,22 @@ struct HiTrendingScraper {
             var topContributors: [HiTrendingBaseDeveloper] = []
             if let contribElements = try? item.select(topContributorItemSelector) {
                 for contrib in contribElements {
-                    let avatar = (try? contrib.attr("src")) ?? ""
+                    let avatar = (try? contrib.attr("src"))
                     let alt = ((try? contrib.attr("alt")) ?? "").replacingOccurrences(of: "@", with: "")
-                    topContributors.append(HiTrendingBaseDeveloper(name: alt, avatar: avatar))
+                    topContributors.append(HiTrendingBaseDeveloper(username: alt, avatar: avatar))
                 }
             }
 
             return HiTrendingRepository(
                 owner: owner,
-                repoName: repoName,
+                name: repoName,
                 description: description,
-                programmingLanguage: programmingLanguage,
-                programmingLanguageColor: programmingLanguageColor,
-                totalStars: totalStars,
+                language: programmingLanguage.isEmpty ? nil : programmingLanguage,
+                languageColor: programmingLanguageColor,
+                stars: totalStars,
                 starsSince: starsSince,
-                totalForks: totalForks,
-                topContributors: topContributors
+                forks: totalForks,
+                builtBy: topContributors
             )
         } catch {
             return nil
@@ -163,10 +163,14 @@ struct HiTrendingScraper {
         if avatar.isEmpty {
             avatar = (try? htmlItem.select(devAvatarSelectorBak1).first()?.attr("src")) ?? ""
         }
-        let name = (try? htmlItem.select(devNameSelector).first()?.text())?
+        var name = (try? htmlItem.select(devNameSelector).first()?.text())?
             .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        let username = (try? htmlItem.select(devUsernameSelector).first()?.text())?
+        var username = (try? htmlItem.select(devUsernameSelector).first()?.text())?
             .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if username.isEmpty {
+            username = name
+            name = ""
+        }
         let popularRepoName = (try? htmlItem.select(devPopularRepoNameSelector).first()?.text())?
             .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         let popularRepoDescription = (try? htmlItem.select("#repoDescription").first()?.text())?
@@ -175,7 +179,7 @@ struct HiTrendingScraper {
         let organizationName = (try? htmlItem.select(devOrganizationNameSelector).first()?.text())?
             .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         
-        let joinedDate = (try? htmlItem.select(devJoinedDateSelector).first()?.text())?
+        let joinedDateString = (try? htmlItem.select(devJoinedDateSelector).first()?.text())?
             .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         
         return HiTrendingDeveloper(
@@ -185,7 +189,7 @@ struct HiTrendingScraper {
             popularRepoName: popularRepoName,
             popularRepoDescription: popularRepoDescription,
             organizationName: organizationName,
-            joinedDate: joinedDate
+            joinedDateString: joinedDateString
         )
     }
 
@@ -198,6 +202,9 @@ struct HiTrendingScraper {
     private func requestHTMLString(proxy: String, path: String, headers: [String: String]) async -> String? {
         let urlString = proxy + HiTrendingConstant.baseURLString + path
         guard let url = URL(string: urlString) else { return nil }
+#if DEBUG
+        print("抓取网页: ", urlString)
+#endif
         var request = URLRequest(url: url)
         for (k, v) in headers {
             request.setValue(v, forHTTPHeaderField: k)

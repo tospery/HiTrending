@@ -3,6 +3,7 @@ import Foundation
 public enum HiTrendingLanguage {
     
     public static let programmings: [String: String] = [
+        "*": "Any",
         "1c-enterprise": "1C Enterprise",
         "abap": "ABAP",
         "abnf": "ABNF",
@@ -477,6 +478,7 @@ public enum HiTrendingLanguage {
     ]
     
     public static let spokens: [String: String] = [
+        "*": "Any",
         "ab": "Abkhazian",
         "aa": "Afar",
         "af": "Afrikaans",

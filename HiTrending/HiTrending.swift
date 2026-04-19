@@ -13,7 +13,7 @@ final public class HiTrending {
         dateRange: HiTrendingRange = .daily,
         headers: [String: String] = [:]
     ) async -> [HiTrendingDeveloper] {
-        await scraper.copyWith(base: "/developers").ghTrendingDevelopers(
+        await scraper.copyWith(base: "/developers").trendingDevelopers(
             programmingLanguage: programmingLanguage,
             proxy: proxy,
             dateRange: dateRange,
@@ -28,7 +28,7 @@ final public class HiTrending {
         dateRange: HiTrendingRange = .daily,
         headers: [String: String] = [:]
     ) async -> [HiTrendingRepository] {
-        await scraper.ghTrendingRepositories(
+        await scraper.trendingRepositories(
             spokenLanguageCode: spokenLanguageCode,
             programmingLanguage: programmingLanguage,
             proxy: proxy,

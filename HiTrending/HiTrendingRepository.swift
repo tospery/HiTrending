@@ -1,36 +1,48 @@
 import Foundation
 
+public struct HiTrendingBaseRepository: Equatable, Hashable, Codable, Sendable {
+    public var name: String
+    public var url: String?
+    public var description: String?
+
+    public init(name: String, url: String?, description: String?) {
+        self.name = name
+        self.url = url
+        self.description = description
+    }
+}
+
 public struct HiTrendingRepository: Equatable, Hashable, Codable, Sendable {
-    public var owner: String
-    public var repoName: String
+    public var owner: HiTrendingBaseDeveloper
+    public var name: String
     public var description: String
-    public var programmingLanguage: String
-    public var programmingLanguageColor: String?
-    public var totalStars: Int
+    public var language: String?
+    public var languageColor: String?
+    public var stars: Int
     public var starsSince: String
-    public var totalForks: Int
-    public var topContributors: [HiTrendingBaseDeveloper]
+    public var forks: Int
+    public var builtBy: [HiTrendingBaseDeveloper]
 
     public init(
         owner: String,
-        repoName: String,
+        name: String,
         description: String,
-        programmingLanguage: String,
-        programmingLanguageColor: String?,
-        totalStars: Int,
+        language: String?,
+        languageColor: String?,
+        stars: Int,
         starsSince: String,
-        totalForks: Int,
-        topContributors: [HiTrendingBaseDeveloper]
+        forks: Int,
+        builtBy: [HiTrendingBaseDeveloper]
     ) {
-        self.owner = owner
-        self.repoName = repoName
+        self.owner = .init(username: owner, avatar: nil)
+        self.name = name
         self.description = description
-        self.programmingLanguage = programmingLanguage
-        self.programmingLanguageColor = programmingLanguageColor
-        self.totalStars = totalStars
+        self.language = language
+        self.languageColor = languageColor
+        self.stars = stars
         self.starsSince = starsSince
-        self.totalForks = totalForks
-        self.topContributors = topContributors
+        self.forks = forks
+        self.builtBy = builtBy
     }
 }
 

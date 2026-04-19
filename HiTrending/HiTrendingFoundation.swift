@@ -52,7 +52,7 @@ func trendingRepositoriesPath(
     if !spokenLanguageCode.isEmpty {
         queries.append("spoken_language_code=\(spokenLanguageCode)")
     }
-    queries.append("since=\(dateRange.rawValue))")
+    queries.append("since=\(dateRange.rawValue)")
     path += "?" + queries.joined(separator: "&")
     return path
 }
