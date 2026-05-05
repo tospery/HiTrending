@@ -666,6 +666,7 @@ public enum HiTrendingLanguage {
     ]
     
     public static let colors: [String: String] = [
+        "Any": "#FB041B",
         "1C Enterprise": "#814CCC",
         "ABAP": "#E8274B",
         "ABAP CDS": "#555e25",
